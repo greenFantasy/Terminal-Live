@@ -67,7 +67,7 @@ class AlgoStrategy(gamelib.AlgoCore):
         game_state = gamelib.GameState(self.config, turn_state)
         gamelib.debug_write('Performing turn {} of your custom algo strategy'.format(game_state.turn_number))
         game_state.suppress_warnings(True)  #Comment or remove this line to enable warnings.
-        mine, theirs = get_destructors(game_state)
+        mine, theirs = gamelib.find_units(game_state, DESTRUCTOR)
         gamelib.debug_write("My destructors:" + str(mine))
         gamelib.debug_write("Their destructors:" + str(theirs))
 

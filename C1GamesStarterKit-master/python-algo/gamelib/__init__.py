@@ -24,7 +24,7 @@ from .util import debug_write
 from .game_state import GameState
 from .unit import GameUnit
 from .game_map import GameMap
-from .bruteforcelib import *
+from .bruteforcelib import find_units
 
 __all__ = ["algocore", "game_state", "game_map", "navigation", "unit", "util", "bruteforcelib"]
  
