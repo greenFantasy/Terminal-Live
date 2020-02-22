@@ -52,6 +52,7 @@ class AlgoStrategy(gamelib.AlgoCore):
         self.bottom_edges = [e for e in self.edges if e[1] < 4]
         self.top_edges = [e for e in self.edges if e[1] > 10]
         self.defended = True
+        self.totalDestructors = 0
 
 
 
@@ -85,34 +86,25 @@ class AlgoStrategy(gamelib.AlgoCore):
         self.deployEMP(game_state)
         self.deployPingOrScrambler(game_state)
 
-
-    def deployFirstPhaseDefense(self,game_state):
-        #This is the first phase of defense, we want to keep this as our basis, and if we have money, we add more stuff.
-        Destructor_Locations = [[1, 12], [26, 12], [4, 11], [23, 11]]
-        game_state.attempt_spawn(DESTRUCTOR,Destructor_Locations)
-        Filter_Locations =  [[0, 13], [1, 13], [26, 13], [27, 13], [3, 12], [4, 12], [5, 12], [6, 12],
-        [7, 12], [8, 12], [9, 12], [10, 12], [11, 12], [12, 12], [13, 12], [14, 12],
-        [15, 12], [16, 12], [17, 12], [18, 12], [19, 12],
-        [20, 12], [21, 12], [22, 12], [23, 12], [24, 12]]
-        game_state.attempt_spawn(FILTER,Filter_Locations)
-
-
-    def deploySecondPhaseDefense(self,game_state):
-        #For the second phase of defense, we upgrade our filter and put more destructor
-        Filter_Locations =  [[0, 13], [1, 13], [26, 13], [27, 13], [3, 12], [4, 12], [5, 12], [6, 12],
-        [7, 12], [8, 12], [9, 12], [10, 12], [11, 12], [12, 12], [13, 12], [14, 12],
-        [15, 12], [16, 12], [17, 12], [18, 12], [19, 12],
-        [20, 12], [21, 12], [22, 12], [23, 12], [24, 12]]
-        self.upgradeFilters(game_state,Filter_Locations)
-        additional_destructor = [[5, 11], [22, 11]]
-        game_state.attempt_spawn(DESTRUCTOR, additional_destructor)
-
-    def deployThridPhaseDefense(self,game_state):
-        #For the third phase of defense, we put another layer of filters
-        Filter_Locations = [[3, 13], [4, 13], [5, 13], [6, 13], [7, 13], [8, 13], [9, 13], [10, 13], [11, 13], [12, 13],
-        [13, 13], [14, 13], [15, 13], [16, 13], [17, 13],
-        [18, 13], [19, 13], [20, 13], [21, 13], [22, 13], [23, 13], [24, 13]]
-        game_state.attempt_spawn(FILTER,Filter_Locations)
+        # DEFENSE SEQUENCE
+        for i in range(1):
+            if (not self.filters1(game_state)):
+                break
+            if (not self.destructors1(game_state)):
+                break
+            if (not self.upgradeFilters1(game_state)):
+                break
+            if (not self.destructors2(game_state)):
+                break
+            if (not self.encryptors1(game_state)):
+                break
+            if (not self.destructors3(game_state)):
+                break
+            if (not self.upgradeFilters2(game_state)):
+                break
+            if (not self.encryptors2(game_state)):
+                break
+            self.freeCores()
 
     def deployEMP(self,game_state):
         # Generate Deploy Location for EMP
@@ -137,13 +129,59 @@ class AlgoStrategy(gamelib.AlgoCore):
         if (game_state.get_resource(BITS, 1) > 7 or not self.defended):
             game_state.attempt_spawn(SCRAMBLER, [[5,8],[22,8],[9,4],[18,4]])
 
-    def upgradeFilters(self, game_state, locations):
-        if (game_state.get_resource(CORES, 0) > 5):
-            game_state.attempt_upgrade(locations)
+    def filters1(self, game_state):
+        fLocations = [[0, 13], [27, 13], [1, 12], [2, 12], [3, 12], [4, 12], [5, 12], [6, 12], [7, 12], [8, 12], [9, 12], [10, 12], [11, 12], [12, 12], [13, 12], [14, 12], [15, 12], [16, 12], [17, 12], [18, 12], [19, 12], [23, 12], [24, 12], [25, 12], [26, 12]]
+        return self.genericDefenseCall(game_state, FILTER, fLocations)
 
-    def encryptors(self, game_state):
-        encryptorLocations = encryptors_points = [[5, 10], [12, 10], [15, 10], [22, 10], [6, 9], [12, 9], [15, 9], [21, 9], [7, 8], [12, 8], [15, 8], [20, 8], [8, 7], [12, 7], [15, 7], [19, 7], [9, 6], [12, 6], [15, 6], [18, 6], [10, 5], [12, 5], [15, 5], [17, 5], [11, 4], [12, 4], [15, 4], [16, 4], [12, 3], [15, 3], [12, 2], [15, 2]]
-        self.smart_place(game_state, ENCRYPTOR, encryptors_points, 4)
+    def destructors1(self, game_state):
+        dLocations = [[5,11],[11,11],[19,11],[23,11]]
+        return self.genericDefenseCall(game_state, DESTRUCTOR, dLocations)
+
+    def upgradeFilters1(self, game_state):
+        fLocations = [[0,13],[1,12],[2,12],[3,12],[10,12],[11,12],[12,12]]
+        game_state.attempt_upgrade(fLocations)
+
+    def destructors2(self, game_state):
+        dLocations = [[18,11],[19,10],[23,10]]
+        return self.genericDefenseCall(game_state, DESTRUCTOR, dLocations)
+
+    def encryptors1(self, game_state):
+        eLocations = [[17,8],[18,8],[17,7]]
+        return self.genericDefenseCall(game_state, ENCRYPTOR, eLocations)
+
+    def destructors3(self, game_state):
+        dLocations = [[8,11],[13,11]]
+        return self.genericDefenseCall(game_state, DESTRUCTOR, dLocations)
+
+    def upgradeFilters2(self, game_state):
+        fLocations = [[17,12],[27,13]]
+        game_state.attempt_upgrade(fLocations)
+
+    def encryptors2(self, game_state):
+        eLocations = [[16,7],[18,7],[17,6],[16,8],[16,6],[18,6]]
+        return self.genericDefenseCall(game_state, ENCRYPTOR, eLocations)
+
+    def freeCores(self, game_state):
+        dLocations = [[2, 11], [3, 11], [4, 11], [5, 11], [6, 11], [7, 11], [8, 11], [9, 11], [10, 11], [11, 11], [12, 11], [13, 11], [14, 11], [15, 11], [16, 11], [17, 11], [18, 11], [19, 11], [20, 11], [19, 10], [18, 9], [17, 8]]
+        self.genericDefenseCall(game_state, DESTRUCTOR, dLocations)
+
+    def upgradeEncryptors(self, game_state):
+        for x in range(28):
+            for y in range(14):
+                if (game_state.game_map[x,y].unit_type == ENCRYPTOR):
+                    game_state.attempt_upgrade([x,y])
+
+    def checkPlaced(self, game_state, locations):
+        for p in locations:
+            if (not game_state.contains_stationary_unit(point)):
+                return False
+        return True
+
+    def genericDefenseCall(self, game_state, type, locations):
+        if (not checkPlaced(locations)):
+            self.smart_place(game_state, type, locations)
+            return checkPlaced(locations)
+        return True
 
     def smart_place(self, game_state, type, locations, min_cores = 0):
         i = 0
