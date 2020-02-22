@@ -46,6 +46,12 @@ class AlgoStrategy(gamelib.AlgoCore):
         self.scored_on_locations = []
         self.enemy_health = []
         self.my_health = []
+        self.defense_action = []
+        self.offense_action = []
+        self.edges = [[0,13],[27,13],[1,12],[26,12],[2,11],[25,11],[3,10],[24,10],[4,9],[23,9],[5,8],[22,8],[6,7],[21,7],[7,6],[20,6],[8,5],[19,5],[9,4],[18,4],[10,3],[17,3],[11,2],[16,2],[12,1],[15,1],[13, 0],[14, 0]]
+        self.bottom_edges = [e for e in self.edges if e[1] < 4]
+        self.top_edges = [e for e in self.edges if e[1] > 10]
+        self.base_defenses = False
 
 
 
