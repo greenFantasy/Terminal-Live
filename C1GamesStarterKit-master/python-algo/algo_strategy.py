@@ -87,13 +87,14 @@ class AlgoStrategy(gamelib.AlgoCore):
 
     def deployFirstPhaseDefense(self,game_state):
         #This is the first phase of defense, we want to keep this as our basis, and if we have money, we add more stuff.
+        Destructor_Locations = [[1, 12], [26, 12], [4, 11], [23, 11]]
+        game_state.attempt_spawn(DESTRUCTOR,Destructor_Locations)
         Filter_Locations =  [[0, 13], [1, 13], [26, 13], [27, 13], [3, 12], [4, 12], [5, 12], [6, 12],
         [7, 12], [8, 12], [9, 12], [10, 12], [11, 12], [12, 12], [13, 12], [14, 12],
         [15, 12], [16, 12], [17, 12], [18, 12], [19, 12],
         [20, 12], [21, 12], [22, 12], [23, 12], [24, 12]]
         game_state.attempt_spawn(FILTER,Filter_Locations)
-        Destructor_Locations = [[1, 12], [26, 12], [4, 11], [23, 11]]
-        game_state.attempt_spawn(DESTRUCTOR,Destructor_Locations)
+
 
     def deploySecondPhaseDefense(self,game_state):
         #For the second phase of defense, we upgrade our filter and put more destructor
@@ -132,7 +133,7 @@ class AlgoStrategy(gamelib.AlgoCore):
 
     def protect(self, game_state):
     # DEPLOYING SCRAMBLERS WHICH PROTECT FROM ENEMY ATTACK
-        if (game_state.get_resource(BITS, 1) > 7 or not defended):
+        if (game_state.get_resource(BITS, 1) > 7 or not self.defended):
             game_state.attempt_spawn(SCRAMBLER, [[5,8],[22,8],[9,4],[18,4]])
 
     def upgradeFilters(self, game_state, locations):
