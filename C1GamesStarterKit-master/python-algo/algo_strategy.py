@@ -51,7 +51,7 @@ class AlgoStrategy(gamelib.AlgoCore):
         self.edges = [[0,13],[27,13],[1,12],[26,12],[2,11],[25,11],[3,10],[24,10],[4,9],[23,9],[5,8],[22,8],[6,7],[21,7],[7,6],[20,6],[8,5],[19,5],[9,4],[18,4],[10,3],[17,3],[11,2],[16,2],[12,1],[15,1],[13, 0],[14, 0]]
         self.bottom_edges = [e for e in self.edges if e[1] < 4]
         self.top_edges = [e for e in self.edges if e[1] > 10]
-        self.base_defenses = False
+        self.defended = True
 
 
 
@@ -77,9 +77,10 @@ class AlgoStrategy(gamelib.AlgoCore):
         self.enemy_health.append(game_state.enemy_health)
         self.my_health.append(game_state.my_health)
         # Actual Actions
-        deployDefenseInfrastracture(self,game_state)
-        deployEMP(self,game_state)
-        deployPingOrScrambler(self,game_state)
+        self.protect(game_state)
+        self.deployDefenseInfrastracture(game_state)
+        self.deployEMP(game_state)
+        self.deployPingOrScrambler(game_state)
 
 
     def deployDefenseInfrastracture(self,game_state):
@@ -98,13 +99,18 @@ class AlgoStrategy(gamelib.AlgoCore):
 
     def deployPingOrScrambler(self,game_state):
         ping_locations = [[4,10]]
-            if (len(self.enemy_health) >= 2):
-                # If Our Attack From Last Trun works, Then There Is A Side Without Destructor
-                if (self.enemy_health[len(self.enemy_health) - 1] - self.enemy_health[len(self.enemy_health) - 2] > 0):
-                    game_state.attempt_spawn(PING, ping_locations, int(game_state.get_resource(BITS)/game_state.type_cost(PING)[1]))
-                    # If We Are Losing Health
-                elif (self.enemy_health[len(self.enemy_health) - 1] - self.enemy_health[len(self.enemy_health) - 2] < 0):
-                    game_state.attempt_spawn(SCRAMBLER, ping_locations, int(game_state.get_resource(BITS)/game_state.type_cost(SCRAMBLER)[1]))
+        if (len(self.enemy_health) >= 2):
+            # If Our Attack From Last Trun works, Then There Is A Side Without Destructor
+            if (self.enemy_health[len(self.enemy_health) - 1] - self.enemy_health[len(self.enemy_health) - 2] > 0):
+                game_state.attempt_spawn(PING, ping_locations, int(game_state.get_resource(BITS)/game_state.type_cost(PING)[1]))
+                # If We Are Losing Health
+            elif (self.enemy_health[len(self.enemy_health) - 1] - self.enemy_health[len(self.enemy_health) - 2] < 0):
+                game_state.attempt_spawn(SCRAMBLER, ping_locations, int(game_state.get_resource(BITS)/game_state.type_cost(SCRAMBLER)[1]))
+
+    def protect(self, game_state):
+    # DEPLOYING SCRAMBLERS WHICH PROTECT FROM ENEMY ATTACK
+    if (game_state.get_resource(BITS, 1) > 7 or not defended):
+        game_state.attempt_spawn(SCRAMBLER, [[5,8],[22,8],[9,4],[18,4]])
 
 if __name__ == "__main__":
     algo = AlgoStrategy()
