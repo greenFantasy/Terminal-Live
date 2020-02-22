@@ -112,6 +112,10 @@ class AlgoStrategy(gamelib.AlgoCore):
     if (game_state.get_resource(BITS, 1) > 7 or not defended):
         game_state.attempt_spawn(SCRAMBLER, [[5,8],[22,8],[9,4],[18,4]])
 
+    def upgradeFilters(self, game_state, locations):
+        if (game_state.get_resource(CORES, 0) > 5):
+            game_state.attempt_upgrade(locations)
+
 if __name__ == "__main__":
     algo = AlgoStrategy()
     algo.start()
