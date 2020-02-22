@@ -80,6 +80,7 @@ class AlgoStrategy(gamelib.AlgoCore):
         ping_locations = [[4,10]]
         p = random.random()
         p = round(p)
+        #Hao Comment
 
         game_state.attempt_spawn(EMP, deploy_locations[p], int(game_state.get_resource(BITS)/game_state.type_cost(EMP)[1]))
 
