@@ -102,7 +102,7 @@ class AlgoStrategy(gamelib.AlgoCore):
         [7, 12], [8, 12], [9, 12], [10, 12], [11, 12], [12, 12], [13, 12], [14, 12],
         [15, 12], [16, 12], [17, 12], [18, 12], [19, 12],
         [20, 12], [21, 12], [22, 12], [23, 12], [24, 12]]
-        self.upgradeFilters(self,game_state,Filter_Locations)
+        self.upgradeFilters(game_state,Filter_Locations)
         additional_destructor = [[5, 11], [22, 11]]
         game_state.attempt_spawn(DESTRUCTOR, additional_destructor)
 
