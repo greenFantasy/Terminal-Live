@@ -52,9 +52,17 @@ class AlgoStrategy(gamelib.AlgoCore):
         self.bottom_edges = [e for e in self.edges if e[1] < 4]
         self.top_edges = [e for e in self.edges if e[1] > 10]
         self.defended = True
-        self.totalDestructors = 0
+        self.breaches = {str(edge): 0 for edge in self.edges}
+        self.enemy_health = 0
+        self.enemy_damage = 0
 
 
+    def on_action_frame(self, turn_string):
+        state = json.loads(turn_string)
+        breaches = state['events']['breach']
+        for breach in breaches:
+            if breach[4] != 1:
+                self.breaches[str(breach[0])] += 1
 
 
     def on_turn(self, turn_state):
@@ -68,6 +76,12 @@ class AlgoStrategy(gamelib.AlgoCore):
         game_state = gamelib.GameState(self.config, turn_state)
         gamelib.debug_write('Performing turn {} of your custom algo strategy'.format(game_state.turn_number))
         game_state.suppress_warnings(True)  #Comment or remove this line to enable warnings.
+        mine, theirs = gamelib.find_units(game_state, DESTRUCTOR)
+        gamelib.debug_write("My destructors:" + str(mine))
+        gamelib.debug_write("Their destructors:" + str(theirs))
+        gamelib.debug_write("My breaches:\n" + str(self.breaches))
+        self.enemy_damage = self.enemy_health - game_state.enemy_health
+        self.enemy_health = game_state.enemy_health
 
         self.algo1(game_state)
 
