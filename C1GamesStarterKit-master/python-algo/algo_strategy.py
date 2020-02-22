@@ -120,7 +120,7 @@ class AlgoStrategy(gamelib.AlgoCore):
         p = round(p)
         deploy_locations =  [[3, 10], [24, 10]]
         numOfEMP = int(game_state.get_resource(BITS)/game_state.type_cost(EMP)[1])
-        game_state.attempt_spawn(EMP, deploy_locations[p], EMP)
+        game_state.attempt_spawn(EMP, deploy_locations[p], numOfEMP)
 
     def deployPingOrScrambler(self,game_state):
         ping_locations = [[4,10]]
