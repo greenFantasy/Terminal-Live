@@ -108,9 +108,7 @@ class AlgoStrategy(gamelib.AlgoCore):
 
     def attack(self,game_state):
         nums = self.getNumber(game_state)
-        gamelib.debug_write('nums: {}'.format(nums))
-        weakSide = self.weakSide()
-        self.deployEMP(game_state,weakSide,nums[0])
+        self.deployEMP(game_state,nums[0])
         self.deployScrambler(game_state, nums[1])
         self.deployPing(game_state,nums[2])
 
@@ -130,62 +128,38 @@ class AlgoStrategy(gamelib.AlgoCore):
             nums[1] = 0
         remainingBITS = game_state.get_resource(BITS,0) - nums[1]
         gamelib.debug_write('{}'.format(remainingBITS))
-        if(gamelib.unit_sector(game_state, DESTRUCTOR, leftRegion) or gamelib.unit_sector(game_state,DESTRUCTOR,rightRegion) and game_state.turn_number >= 10):
+        if(len(self.theirDestructors) <= 4 and game_state.turn_number >= 10):
             nums[2] = int(math.floor(0.2*remainingBITS))
             if(nums[2]<0):
                 nums[2] = 0
         else:
             nums[2] = 0
         remainingBITS = remainingBITS - nums[2]
-        gamelib.debug_write('{}'.format(remainingBITS))
         nums[0] = int(math.floor(remainingBITS/3))
         return nums
 
-    def deployEMP(self,game_state,weakSide,num):
-        if(not weakSide):
-            rightProb = [0.5,0.2,0.2,0.1]
-            rightEMPLocations = [[3, 10], [4, 9], [5, 8], [6, 7]]
-            deployIndex = 0
-            p = random.random()
-            if(p < rightProb[0]):
-                deployIndex = rightEMPLocations[0]
-            elif(p > rightProb[0] and p< rightProb[0]+rightProb[1]):
-                deployIndex = rightEMPLocations[1]
-            elif(p > rightProb[0]+rightProb[1] and p < rightProb[0]+rightProb[1]+rightProb[2]):
-                deployIndex = rightEMPLocations[2]
-            else:
-                deployIndex = rightEMPLocations[3]
-            game_state.attempt_spawn(EMP, deployIndex, num)
+    def deployEMP(self,game_state,num):
+        rightProb = [0.5,0.2,0.2,0.1]
+        rightEMPLocations = [[3, 10], [4, 9], [5, 8], [6, 7]]
+        deployIndex = 0
+        p = random.random()
+        if(p < rightProb[0]):
+            deployIndex = rightEMPLocations[0]
+        elif(p > rightProb[0] and p< rightProb[0]+rightProb[1]):
+            deployIndex = rightEMPLocations[1]
+        elif(p > rightProb[0]+rightProb[1] and p < rightProb[0]+rightProb[1]+rightProb[2]):
+            deployIndex = rightEMPLocations[2]
         else:
-            leftEMPLocation = [[18, 4]]
-            game_state.attempt_spawn(EMP,leftEMPLocation,num)
+            deployIndex = rightEMPLocations[3]
+        game_state.attempt_spawn(EMP, deployIndex, num)
 
     def deployScrambler(self,game_state,num):
-        location = [[7, 6], [20, 6]]
-        p = random.random()
-        p = round(p)
-        if(num == 1):
-            game_state.attempt_spawn(SCRAMBLER,location[p],1)
-        elif(num == 2):
-            game_state.attempt_spawn(SCRAMBLER,location,1)
-        elif(num == 3):
-            game_state.attempt_spawn(SCRAMBLER,location[p],2)
-            game_state.attempt_spawn(SCRAMBLER,location[1-p],1)
+        location = [[21, 7]]
+        game_state.attempt_spawn(SCRAMBLER,location,num)
 
     def deployPing(self,game_state,num):
         location = [[9, 4]]
         game_state.attempt_spawn(PING,location,num)
-
-    def weakSide(self):
-        x = 0
-        if(len(self.theirDestructors) != 0 ):
-            for i in range(0,len(self.theirDestructors)):
-                x = x + self.theirDestructors[i][0]
-            x = x/len(self.theirDestructors)
-            if(x <= 13):
-                return True
-            return False
-        return False
 
     def filters1(self, game_state):
         fLocations = [[0, 13], [27, 13], [1, 12], [2, 12], [3, 12], [4, 12], [5, 12], [6, 12], [7, 12], [8, 12], [9, 12], [10, 12], [11, 12], [12, 12], [13, 12], [14, 12], [15, 12], [16, 12], [17, 12], [18, 12], [19, 12], [23, 12], [24, 12], [25, 12], [26, 12]]
@@ -200,7 +174,7 @@ class AlgoStrategy(gamelib.AlgoCore):
         game_state.attempt_upgrade(fLocations)
 
     def destructors2(self, game_state):
-        dLocations = [[18,11],[19,10],[23,10]]
+        dLocations = [[18,11],[3,11],[19,10],[23,10],[2,11]]
         return self.genericDefenseCall(game_state, DESTRUCTOR, dLocations)
 
     def encryptors1(self, game_state):
@@ -223,7 +197,7 @@ class AlgoStrategy(gamelib.AlgoCore):
         dLocations = [[26, 12], [2, 11], [3, 11], [4, 11], [5, 11], [6, 11], [7, 11], [8, 11], [9, 11], [10, 11], [11, 11], [12, 11], [13, 11], [14, 11], [15, 11], [16, 11], [17, 11], [18, 11], [19, 11], [20, 11], [24, 11], [25, 11], [19, 10], [22, 10], [23, 10], [24, 10], [18, 9], [22, 9], [23, 9], [17, 8], [21, 8], [22, 8], [21, 7]]
         random.shuffle(dLocations)
         self.genericDefenseCall(game_state, DESTRUCTOR, dLocations)
-        self.upgradeEncryptors(self,game_state)
+        self.upgradeEncryptors(game_state)
         eLocations = [[13, 7], [14, 7], [13, 6], [14, 6], [13, 5], [14, 5], [15, 5], [13, 4], [14, 4], [15, 4], [13, 3], [14, 3]]
         self.genericDefenseCall(game_state, ENCRYPTOR, eLocations)
 
