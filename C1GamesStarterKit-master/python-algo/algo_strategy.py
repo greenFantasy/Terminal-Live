@@ -25,6 +25,7 @@ class AlgoStrategy(gamelib.AlgoCore):
         seed = random.randrange(maxsize)
         random.seed(seed)
         gamelib.debug_write('Random seed: {}'.format(seed))
+        self.turn_count = 0
 
     def on_game_start(self, config):
         """
@@ -55,6 +56,7 @@ class AlgoStrategy(gamelib.AlgoCore):
         unit deployments, and transmitting your intended deployments to the
         game engine.
         """
+
         game_state = gamelib.GameState(self.config, turn_state)
         gamelib.debug_write('Performing turn {} of your custom algo strategy'.format(game_state.turn_number))
         game_state.suppress_warnings(True)  #Comment or remove this line to enable warnings.
@@ -65,18 +67,38 @@ class AlgoStrategy(gamelib.AlgoCore):
 
 
     def algo1(self, game_state):
-        dLocations = [[ 3, 12],[ 9, 12],[ 19, 12],[ 24, 12],[ 14, 9]]
-        v1 = [[5, 13],[22, 13],[6, 12],[21, 12],[7, 11],[20, 11],[8, 10],[19, 10],[9, 9],[18, 9],[10, 8],[17, 8],[11, 7],[16, 7],[12, 6],[15, 6],[13, 5],[14, 5]]
 
-        edges = [[0, 13],[ 27, 13],[ 1, 12],[ 26, 12],[ 2, 11],[ 25, 11],[ 3, 10],[ 24, 10],[ 4, 9],[ 23, 9],[ 5, 8],[ 22, 8],[ 6, 7],[ 21, 7],[ 7, 6],[ 20, 6],[ 8, 5],[ 19, 5],[ 9, 4],[ 18, 4],[ 10, 3],[ 17, 3],[ 11, 2],[ 16, 2],[ 12, 1],[ 15, 1],[ 13, 0],[ 14, 0]]
+        self.turn_count += 1
 
-        random.shuffle(edges)
+        edge_one = [[ 0, 13],[ 1, 13],[ 2, 13],[ 3, 13],[ 6, 13],[ 7, 13],[ 8, 13],[ 9, 13],[ 10, 13],[ 11, 13],[ 12, 13],[ 13, 13],[ 14, 13],[ 15, 13],[ 16, 13],[ 17, 13],[ 18, 13],[ 19, 13],[ 20, 13],[ 21, 13],[ 22, 13],[ 23, 13],[ 24, 13],[ 25, 13],[ 26, 13],[ 27, 13],[ 1, 12]]
 
-        game_state.attempt_spawn(DESTRUCTOR, dLocations)
+        destructor_one = [[2,12], [25,12], [7,12]]
 
-        game_state.attempt_spawn(FILTER, v1)
+        edge_two = [[4,12], [5,11], [6,10], [7,10], [8,10], [9,10], [26,12]]
 
-        game_state.attempt_spawn(PING, edges)
+        destructor_two = [[9,12]]
+
+        edge_three = [[ 0, 13],[ 1, 13],[ 2, 13],[ 3, 13],[ 6, 13],[ 7, 13],[ 8, 13],[ 9, 13],[ 10, 13],[ 11, 13],[ 12, 13],[ 13, 13],[ 14, 13],[ 15, 13],[ 16, 13],[ 17, 13],[ 18, 13],[ 19, 13],[ 20, 13],[ 21, 13],[ 22, 13],[ 23, 13],[ 24, 13],[ 25, 13],[ 26, 13],[ 27, 13],[ 1, 12],[ 4, 12],[ 26, 12],[ 5, 11],[ 6, 10],[ 7, 10],[ 8, 10],[ 9, 10],[ 10, 10],[ 11, 10],[ 12, 10],[ 13, 10],[ 14, 10],[ 15, 10],[ 16, 10],[ 17, 10],[ 18, 10],[ 19, 10],[ 20, 10],[ 21, 10]]
+
+        destructor_three = [[11,12], [13,12], [15,12], [17, 12], [19, 12]]
+
+        edge_four = [[8,12], [10,12], [12,12], [14,12], [16,12], [18,12], [20,12]]
+
+        
+
+        game_state.attempt_spawn(DESTRUCTOR, destructor_one)
+        game_state.attempt_spawn(FILTER, edge_one)
+        game_state.attempt_spawn(FILTER, edge_two)
+        game_state.attempt_spawn(DESTRUCTOR, destructor_two)
+        game_state.attempt_spawn(FILTER, edge_three)
+        game_state.attempt_spawn(DESTRUCTOR, destructor_three)
+
+        game_state.attempt_spawn(EMP, [[24,10]])
+        if self.turn_count % 3 == 0:
+            for x in range(10):
+                game_state.attempt_spawn(PING, [[12,1]])
+                game_state.attempt_spawn(PING, [[15,1]])
+
 
 
 if __name__ == "__main__":
