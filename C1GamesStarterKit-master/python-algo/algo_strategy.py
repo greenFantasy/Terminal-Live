@@ -68,30 +68,37 @@ class AlgoStrategy(gamelib.AlgoCore):
 
 
     def algo1(self, game_state):
-
         self.enemy_health.append(game_state.enemy_health)
         self.my_health.append(game_state.my_health)
+        # Actual Actions
+        deployDefenseInfrastracture(self,game_state)
+        deployEMP(self,game_state)
+        deployPingOrScrambler(self,game_state)
 
+
+    def deployDefenseInfrastracture(self,game_state):
         Filter_Locations =  [[0, 13], [1, 13], [26, 13], [27, 13], [3, 12], [4, 12], [5, 12], [6, 12], [7, 12], [8, 12], [9, 12], [10, 12], [11, 12], [12, 12], [13, 12], [14, 12], [15, 12], [16, 12], [17, 12], [18, 12], [19, 12], [20, 12], [21, 12], [22, 12], [23, 12], [24, 12]]
         game_state.attempt_spawn(FILTER,Filter_Locations)
         Destructor_Locations = [[1, 12], [26, 12], [13, 8]]
         game_state.attempt_spawn(DESTRUCTOR,Destructor_Locations)
-        deploy_locations =  [[3, 10], [24, 10]]
-        ping_locations = [[4,10]]
+
+    def deployEMP(self,game_state):
+        # Generate Deploy Location for EMP
         p = random.random()
         p = round(p)
-        #Hao Comment
+        deploy_locations =  [[3, 10], [24, 10]]
+        numOfEMP = int(game_state.get_resource(BITS)/game_state.type_cost(EMP)[1])
+        game_state.attempt_spawn(EMP, deploy_locations[p], EMP)
 
-        game_state.attempt_spawn(EMP, deploy_locations[p], int(game_state.get_resource(BITS)/game_state.type_cost(EMP)[1]))
-
-        if (len(self.enemy_health) >= 2):
-
-            if (self.enemy_health[len(self.enemy_health) - 1] - self.enemy_health[len(self.enemy_health) - 2] > 0):
-                game_state.attempt_spawn(PING, ping_locations, int(game_state.get_resource(BITS)/game_state.type_cost(PING)[1]))
-
-            elif (self.enemy_health[len(self.enemy_health) - 1] - self.enemy_health[len(self.enemy_health) - 2] < 0):
-                game_state.attempt_spawn(SCRAMBLER, ping_locations, int(game_state.get_resource(BITS)/game_state.type_cost(SCRAMBLER)[1]))
-
+    def deployPingOrScrambler(self,game_state):
+        ping_locations = [[4,10]]
+            if (len(self.enemy_health) >= 2):
+                # If Our Attack From Last Trun works, Then There Is A Side Without Destructor
+                if (self.enemy_health[len(self.enemy_health) - 1] - self.enemy_health[len(self.enemy_health) - 2] > 0):
+                    game_state.attempt_spawn(PING, ping_locations, int(game_state.get_resource(BITS)/game_state.type_cost(PING)[1]))
+                    # If We Are Losing Health
+                elif (self.enemy_health[len(self.enemy_health) - 1] - self.enemy_health[len(self.enemy_health) - 2] < 0):
+                    game_state.attempt_spawn(SCRAMBLER, ping_locations, int(game_state.get_resource(BITS)/game_state.type_cost(SCRAMBLER)[1]))
 
 if __name__ == "__main__":
     algo = AlgoStrategy()
