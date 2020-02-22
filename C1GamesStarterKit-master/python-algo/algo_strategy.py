@@ -80,6 +80,7 @@ class AlgoStrategy(gamelib.AlgoCore):
         self.protect(game_state)
         self.deployFirstPhaseDefense(game_state)
         self.deploySecondPhaseDefense(game_state)
+        self.encryptors(game_state)
         self.deployThridPhaseDefense(game_state)
         self.deployEMP(game_state)
         self.deployPingOrScrambler(game_state)
@@ -139,6 +140,18 @@ class AlgoStrategy(gamelib.AlgoCore):
     def upgradeFilters(self, game_state, locations):
         if (game_state.get_resource(CORES, 0) > 5):
             game_state.attempt_upgrade(locations)
+
+    def encryptors(self, game_state):
+        encryptorLocations = encryptors_points = [[5, 10], [12, 10], [15, 10], [22, 10], [6, 9], [12, 9], [15, 9], [21, 9], [7, 8], [12, 8], [15, 8], [20, 8], [8, 7], [12, 7], [15, 7], [19, 7], [9, 6], [12, 6], [15, 6], [18, 6], [10, 5], [12, 5], [15, 5], [17, 5], [11, 4], [12, 4], [15, 4], [16, 4], [12, 3], [15, 3], [12, 2], [15, 2]]
+        self.smart_place(game_state, ENCRYPTOR, encryptors_points, 4)
+
+    def smart_place(self, game_state, type, locations, min_cores = 0):
+        i = 0
+        while (game_state.get_resource(CORES, 0) > min_cores and i < len(locations)):
+            game_state.attempt_spawn(type, locations[i])
+            i += 1
+        return i
+
 
 if __name__ == "__main__":
     algo = AlgoStrategy()
