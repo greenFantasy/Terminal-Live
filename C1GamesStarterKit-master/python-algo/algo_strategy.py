@@ -53,6 +53,8 @@ class AlgoStrategy(gamelib.AlgoCore):
         self.top_edges = [e for e in self.edges if e[1] > 10]
         self.defended = True
         self.breaches = {str(edge): 0 for edge in self.edges}
+        self.enemy_health = 0
+        self.enemy_damage = 0
 
 
     def on_action_frame(self, turn_string):
@@ -78,6 +80,8 @@ class AlgoStrategy(gamelib.AlgoCore):
         gamelib.debug_write("My destructors:" + str(mine))
         gamelib.debug_write("Their destructors:" + str(theirs))
         gamelib.debug_write("My breaches:\n" + str(self.breaches))
+        self.enemy_damage = self.enemy_health - game_state.enemy_health
+        self.enemy_health = game_state.enemy_health
 
         self.algo1(game_state)
 
