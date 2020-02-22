@@ -202,10 +202,8 @@ class AlgoStrategy(gamelib.AlgoCore):
         self.genericDefenseCall(game_state, ENCRYPTOR, eLocations)
 
     def upgradeEncryptors(self, game_state):
-        for x in range(28):
-            for y in range(14):
-                if (game_state.game_map[x,y].unit_type == ENCRYPTOR):
-                    game_state.attempt_upgrade([x,y])
+        eLocations = [[13, 7], [14, 7], [13, 6], [14, 6], [13, 5], [14, 5], [15, 5], [13, 4], [14, 4], [15, 4], [13, 3], [14, 3]]
+        game_state.attempt_upgrade(eLocations)
 
     def checkPlaced(self, game_state, locations):
         for p in locations:
