@@ -25,7 +25,7 @@ class AlgoStrategy(gamelib.AlgoCore):
         seed = random.randrange(maxsize)
         random.seed(seed)
         gamelib.debug_write('Random seed: {}'.format(seed))
-
+        game_history = []
     def on_game_start(self, config):
         """
         Read in config and perform any initial setup here
@@ -65,18 +65,21 @@ class AlgoStrategy(gamelib.AlgoCore):
 
 
     def algo1(self, game_state):
-        dLocations = [[ 3, 12],[ 9, 12],[ 19, 12],[ 24, 12],[ 14, 9]]
-        v1 = [[5, 13],[22, 13],[6, 12],[21, 12],[7, 11],[20, 11],[8, 10],[19, 10],[9, 9],[18, 9],[10, 8],[17, 8],[11, 7],[16, 7],[12, 6],[15, 6],[13, 5],[14, 5]]
-
-        edges = [[0, 13],[ 27, 13],[ 1, 12],[ 26, 12],[ 2, 11],[ 25, 11],[ 3, 10],[ 24, 10],[ 4, 9],[ 23, 9],[ 5, 8],[ 22, 8],[ 6, 7],[ 21, 7],[ 7, 6],[ 20, 6],[ 8, 5],[ 19, 5],[ 9, 4],[ 18, 4],[ 10, 3],[ 17, 3],[ 11, 2],[ 16, 2],[ 12, 1],[ 15, 1],[ 13, 0],[ 14, 0]]
-
-        random.shuffle(edges)
-
-        game_state.attempt_spawn(DESTRUCTOR, dLocations)
-
-        game_state.attempt_spawn(FILTER, v1)
-
-        game_state.attempt_spawn(PING, edges)
+        self.game_history.append(game_state.enemy_health);
+        Filter_Locations =  [[0, 13], [1, 13], [26, 13], [27, 13], [3, 12], [4, 12], [5, 12], [6, 12], [7, 12], [8, 12], [9, 12], [10, 12], [11, 12], [12, 12], [13, 12], [14, 12], [15, 12], [16, 12], [17, 12], [18, 12], [19, 12], [20, 12], [21, 12], [22, 12], [23, 12], [24, 12]]
+        game_state.attempt_spawn(FILTER,Filter_Locations)
+        Destructor_Locations = [[1, 12], [26, 12], [13, 8]]
+        game_state.attempt_spawn(DESTRUCTOR,Destructor_Locations)
+        deploy_locations =  [[3, 10], [24, 10]]
+        ping_locations = [[4,10]]
+        p = random.random();
+        p = round(p);
+        game_state.attempt_spawn(EMP, deploy_locations[p], game_state.get_resource(game_state.BITS)//game_state.type_cost(EMP)[1])
+        if(len(game_history) >= 2):
+            if (game_history[len(game_history) - 1] - game_history[len(game_history) - 2] > 0):
+                game_state.attempt_spawn(PING, ping_locations, game_state.get_resource(game_state.BITS)//game_state.type_cost(PING)[1])
+            elif (game_history[len(game_history) - 1] - game_history[len(game_history) - 2] < 0):
+                game_state.attempt_spawn(SCRAMBLER, ping_locations, game_state.get_resource(game_state.BITS)//game_state.type_cost(SCRAMBLER)[1])
 
 
 if __name__ == "__main__":
