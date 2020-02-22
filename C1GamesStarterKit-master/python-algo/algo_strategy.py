@@ -25,7 +25,8 @@ class AlgoStrategy(gamelib.AlgoCore):
         seed = random.randrange(maxsize)
         random.seed(seed)
         gamelib.debug_write('Random seed: {}'.format(seed))
-        game_history = []
+
+
     def on_game_start(self, config):
         """
         Read in config and perform any initial setup here
@@ -43,6 +44,8 @@ class AlgoStrategy(gamelib.AlgoCore):
         CORES = 0
         # This is a good place to do initial setup
         self.scored_on_locations = []
+        self.enemy_health = []
+        self.my_health = []
 
 
 
@@ -65,7 +68,9 @@ class AlgoStrategy(gamelib.AlgoCore):
 
 
     def algo1(self, game_state):
-        self.game_history.append(game_state.enemy_health);
+        self.enemy_health.append(game_state.enemy_health)
+        self.my_health.append(game_state.my_health)
+
         Filter_Locations =  [[0, 13], [1, 13], [26, 13], [27, 13], [3, 12], [4, 12], [5, 12], [6, 12], [7, 12], [8, 12], [9, 12], [10, 12], [11, 12], [12, 12], [13, 12], [14, 12], [15, 12], [16, 12], [17, 12], [18, 12], [19, 12], [20, 12], [21, 12], [22, 12], [23, 12], [24, 12]]
         game_state.attempt_spawn(FILTER,Filter_Locations)
         Destructor_Locations = [[1, 12], [26, 12], [13, 8]]
@@ -75,10 +80,10 @@ class AlgoStrategy(gamelib.AlgoCore):
         p = random.random();
         p = round(p);
         game_state.attempt_spawn(EMP, deploy_locations[p], game_state.get_resource(game_state.BITS)//game_state.type_cost(EMP)[1])
-        if(len(game_history) >= 2):
-            if (game_history[len(game_history) - 1] - game_history[len(game_history) - 2] > 0):
+        if (len(enemy_health) >= 2):
+            if (self.enemy_health[len(self.enemy_health) - 1] - self.enemy_health[len(self.enemy_health) - 2] > 0):
                 game_state.attempt_spawn(PING, ping_locations, game_state.get_resource(game_state.BITS)//game_state.type_cost(PING)[1])
-            elif (game_history[len(game_history) - 1] - game_history[len(game_history) - 2] < 0):
+            elif (self.enemy_health[len(self.enemy_health) - 1] - self.enemy_health[len(self.enemy_health) - 2] < 0):
                 game_state.attempt_spawn(SCRAMBLER, ping_locations, game_state.get_resource(game_state.BITS)//game_state.type_cost(SCRAMBLER)[1])
 
 
