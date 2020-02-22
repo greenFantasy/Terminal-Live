@@ -68,6 +68,7 @@ class AlgoStrategy(gamelib.AlgoCore):
 
 
     def algo1(self, game_state):
+
         self.enemy_health.append(game_state.enemy_health)
         self.my_health.append(game_state.my_health)
 
@@ -77,14 +78,18 @@ class AlgoStrategy(gamelib.AlgoCore):
         game_state.attempt_spawn(DESTRUCTOR,Destructor_Locations)
         deploy_locations =  [[3, 10], [24, 10]]
         ping_locations = [[4,10]]
-        p = random.random();
-        p = round(p);
-        game_state.attempt_spawn(EMP, deploy_locations[p], game_state.get_resource(game_state.BITS)//game_state.type_cost(EMP)[1])
-        if (len(enemy_health) >= 2):
+        p = random.random()
+        p = round(p)
+
+        game_state.attempt_spawn(EMP, deploy_locations[p], int(game_state.get_resource(BITS)/game_state.type_cost(EMP)[1]))
+
+        if (len(self.enemy_health) >= 2):
+
             if (self.enemy_health[len(self.enemy_health) - 1] - self.enemy_health[len(self.enemy_health) - 2] > 0):
-                game_state.attempt_spawn(PING, ping_locations, game_state.get_resource(game_state.BITS)//game_state.type_cost(PING)[1])
+                game_state.attempt_spawn(PING, ping_locations, int(game_state.get_resource(BITS)/game_state.type_cost(PING)[1]))
+
             elif (self.enemy_health[len(self.enemy_health) - 1] - self.enemy_health[len(self.enemy_health) - 2] < 0):
-                game_state.attempt_spawn(SCRAMBLER, ping_locations, game_state.get_resource(game_state.BITS)//game_state.type_cost(SCRAMBLER)[1])
+                game_state.attempt_spawn(SCRAMBLER, ping_locations, int(game_state.get_resource(BITS)/game_state.type_cost(SCRAMBLER)[1]))
 
 
 if __name__ == "__main__":
