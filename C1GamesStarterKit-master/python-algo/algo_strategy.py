@@ -52,8 +52,15 @@ class AlgoStrategy(gamelib.AlgoCore):
         self.bottom_edges = [e for e in self.edges if e[1] < 4]
         self.top_edges = [e for e in self.edges if e[1] > 10]
         self.defended = True
+        self.breaches = {str(edge): 0 for edge in self.edges}
 
 
+    def on_action_frame(self, turn_string):
+        state = json.loads(turn_string)
+        breaches = state['events']['breach']
+        for breach in breaches:
+            if breach[4] != 1:
+                self.breaches[str(breach[0])] += 1
 
 
     def on_turn(self, turn_state):
@@ -70,6 +77,7 @@ class AlgoStrategy(gamelib.AlgoCore):
         mine, theirs = gamelib.find_units(game_state, DESTRUCTOR)
         gamelib.debug_write("My destructors:" + str(mine))
         gamelib.debug_write("Their destructors:" + str(theirs))
+        gamelib.debug_write("My breaches:\n" + str(self.breaches))
 
         self.algo1(game_state)
 

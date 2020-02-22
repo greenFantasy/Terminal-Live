@@ -9,4 +9,3 @@ def find_units(game_state, name):
                 else:
                     mine.append(loc)
     return mine, theirs
-            
