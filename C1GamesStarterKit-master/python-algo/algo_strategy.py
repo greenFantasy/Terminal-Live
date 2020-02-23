@@ -174,7 +174,7 @@ class AlgoStrategy(gamelib.AlgoCore):
         game_state.attempt_upgrade(fLocations)
 
     def destructors2(self, game_state):
-        dLocations = [[18,11],[3,11],[19,10],[23,10],[2,11]]
+        dLocations = [[18,11],[2,11],[19,10],[23,10],[3,11]]
         return self.genericDefenseCall(game_state, DESTRUCTOR, dLocations)
 
     def encryptors1(self, game_state):
