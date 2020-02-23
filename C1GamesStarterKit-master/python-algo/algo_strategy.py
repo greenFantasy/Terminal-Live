@@ -174,7 +174,7 @@ class AlgoStrategy(gamelib.AlgoCore):
         game_state.attempt_upgrade(fLocations)
 
     def destructors2(self, game_state):
-        dLocations = [[18,11],[2,11],[26,13],[19,10],[23,10],[3,11]]
+        dLocations = [[18,11],[2,11],[19,10],[23,10],[3,11]]
         return self.genericDefenseCall(game_state, DESTRUCTOR, dLocations)
 
     def encryptors1(self, game_state):
@@ -194,7 +194,7 @@ class AlgoStrategy(gamelib.AlgoCore):
         return self.genericDefenseCall(game_state, ENCRYPTOR, eLocations)
 
     def freeCores(self, game_state):
-        dLocations = [[26, 12], [2, 11], [3, 11], [4, 11], [5, 11], [6, 11], [7, 11], [8, 11], [9, 11], [10, 11], [11, 11], [12, 11], [13, 11], [14, 11], [15, 11], [16, 11], [17, 11], [18, 11], [19, 11], [20, 11], [24, 11], [25, 11], [19, 10], [22, 10], [23, 10], [24, 10], [18, 9], [22, 9], [23, 9], [17, 8], [21, 8], [22, 8], [21, 7]]
+        dLocations = [[26, 12], [2, 11], [3, 11], [4, 11], [5, 11], [26, 13], [6, 11], [7, 11], [8, 11], [9, 11], [10, 11], [11, 11], [12, 11], [13, 11], [14, 11], [15, 11], [16, 11], [17, 11], [18, 11], [19, 11], [20, 11], [24, 11], [25, 11], [19, 10], [22, 10], [23, 10], [24, 10], [18, 9], [22, 9], [23, 9], [17, 8], [21, 8], [22, 8], [21, 7]]
         random.shuffle(dLocations)
         self.genericDefenseCall(game_state, DESTRUCTOR, dLocations)
         self.upgradeEncryptors(game_state)
