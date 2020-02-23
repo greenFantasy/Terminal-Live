@@ -90,9 +90,9 @@ class AlgoStrategy(gamelib.AlgoCore):
         self.attack(game_state)
         # DEFENSE SEQUENCE
         for i in range(1):
-            if (not self.filters1(game_state)):
-                break
             if (not self.destructors1(game_state)):
+                break
+            if (not self.filters1(game_state)):
                 break
             self.upgradeFilters1(game_state)
             if (not self.destructors2(game_state)):
@@ -174,7 +174,7 @@ class AlgoStrategy(gamelib.AlgoCore):
         game_state.attempt_upgrade(fLocations)
 
     def destructors2(self, game_state):
-        dLocations = [[18,11],[2,11],[19,10],[23,10],[3,11]]
+        dLocations = [[18,11],[2,11],[26,13],[19,10],[23,10],[3,11]]
         return self.genericDefenseCall(game_state, DESTRUCTOR, dLocations)
 
     def encryptors1(self, game_state):
